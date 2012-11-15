@@ -11,7 +11,7 @@ chef-solo を capistrano で実行する例
 
 config/deploy.rb でファイルを配置するディレクトリを指定。
 
-    set :chef_dir,    "/root/chef"
+    set :chef_dir,    "/etc/chef"
 
 json/base.json で定義された hosts に対して実行される。
 

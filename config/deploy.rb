@@ -1,7 +1,7 @@
 require "json"
 
 set :application, "chef-solo"
-set :chef_dir,    "/root/chef"
+set :chef_dir,    "/etc/chef"
 set :hostname,    `hostname -s`.chomp
 set :json_dir,    "#{chef_dir}/json"
 set :config_dir,  "#{chef_dir}/config"
@@ -28,7 +28,7 @@ namespace :chef do
   end
 
   task :init_config do
-    File::open("#{config_dir}/solo.rb", "w") {|f|
+    File::open("#{chef_dir}/solo.rb", "w") {|f|
       f.puts "file_cache_path '/tmp/chef-solo'"
       f.puts "cookbook_path   '#{chef_dir}/cookbooks'"
       f.puts "node_name       `hostname -s`.chomp"
@@ -41,7 +41,7 @@ namespace :chef do
 
   desc "run chef-solo"
   task :run_chef, :roles => :host do
-    run "chef-solo -c #{config_dir}/solo.rb -j #{config_dir}/self.json"
+    run "chef-solo -c #{chef_dir}/solo.rb -j #{config_dir}/self.json"
   end
 
   desc "rsync #{chef_dir}"
