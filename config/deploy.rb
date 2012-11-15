@@ -29,9 +29,11 @@ namespace :chef do
 
   task :init_config do
     File::open("#{chef_dir}/solo.rb", "w") {|f|
-      f.puts "file_cache_path '/tmp/chef-solo'"
-      f.puts "cookbook_path   '#{chef_dir}/cookbooks'"
-      f.puts "node_name       `hostname -s`.chomp"
+      f.write <<-EOF
+file_cache_path '/tmp/chef-solo'
+cookbook_path   '#{chef_dir}/cookbooks'
+node_name       `hostname -s`.chomp
+      EOF
     }
   end
 
