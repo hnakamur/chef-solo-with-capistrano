@@ -3,27 +3,12 @@ require "json"
 set :application, "chef-solo"
 set :chef_dir,    "/etc/chef"
 set :hostname,    `hostname -s`.chomp
-set :json_dir,    "#{chef_dir}/json"
-set :config_dir,  "#{chef_dir}/config"
-set :bin_dir,     "#{chef_dir}/bin"
-set :base,        JSON.parse( File::open("#{json_dir}/base.json").read )
-
-if exists? :hosts
-  hosts.split(",").each do |host|
-    role :host, host
-  end
-else
-  base["hosts"].keys.sort.each do |host|
-    role :host, host
-  end
-end
 
 namespace :chef do
 
   task :default do
     init_config
     sync
-    merge_json
     run_chef
   end
 
@@ -32,25 +17,24 @@ namespace :chef do
       f.write <<-EOF
 file_cache_path '/tmp/chef-solo'
 cookbook_path   '#{chef_dir}/cookbooks'
+json_attribs    '#{chef_dir}/json//%s.json' % `hostname -s`.chomp
+role_path       '#{chef_dir}/roles'
 node_name       `hostname -s`.chomp
+log_level       :debug
       EOF
     }
   end
 
-  task :merge_json, :roles => :host do
-    run "export HOST=`hostname -s`; #{bin_dir}/merge_json #{json_dir}/base.json #{json_dir}/${HOST}.json > #{config_dir}/self.json"
-  end
-
   desc "run chef-solo"
   task :run_chef, :roles => :host do
-    run "chef-solo -c #{chef_dir}/solo.rb -j #{config_dir}/self.json"
+    run "chef-solo -c #{chef_dir}/solo.rb"
   end
 
   desc "rsync #{chef_dir}"
   task :sync do
     find_servers_for_task(current_task).each do |server|
       next if server.host == hostname
-      `rsync -avC --delete -e ssh --exclude config/self.json #{chef_dir}/ #{server.host}:#{chef_dir}/`
+      `rsync -avC --delete -e ssh #{chef_dir}/ #{server.host}:#{chef_dir}/`
     end
   end
 

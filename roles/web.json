@@ -1,0 +1,16 @@
+{
+  "default_attributes": {
+  },
+  "json_class": "Chef::Role",
+  "name": "base",
+  "description": "",
+  "env_run_lists": {
+  },
+  "override_attributes": {
+    "nameservers": ["192.168.11.1", "8.8.4.4", "8.8.8.8"]
+  },
+  "run_list": [
+    "role[base]"
+  ],
+  "chef_type": "role"
+}
