@@ -9,29 +9,14 @@ chef-solo を capistrano で実行する例
 
 ## 設定
 
-config/deploy.rb でファイルを配置するディレクトリを指定。
+ファイルを配置するディレクトリは/etc/chef固定です。
+(Convention over Configurationです。またこうしておけばホストにログインして
+直接chef-soloを実行するときに単にchef-soloと打つだけですみます。/etc/chef/solo.rbはデフォルトなので-cオプションは不要。/etc/chef/solo.rbにjson_attribsを指定しているので-jオプションも不要)
 
-    set :chef_dir,    "/etc/chef"
+cap chef HOSTS=host1,host2
+のように実行先のホストを指定して実行します。
 
-json/base.json で定義された hosts に対して実行される。
-
-    {
-      "hosts": {
-        "web01": "192.168.1.101",
-        "app01": "192.168.1.102"
-      },
-      "nameservers": [ "192.168.1.1", "8.8.8.8" ]
-      "run_list": [
-        "os-defaults"
-      ]
-    }
-
-json/{hostname}.json が、base.json に上書きされてそれぞれのホストで chef-solo が実行される。
-
-* run_list は base.json + {hostname}.json の内容が連結される
-* それ以外の key が重複した場合は {hostname}.json の内容が使用される
-
-特定のホストのみ実行したい場合は `cap -S hosts=web01,web02 chef` のように引数 -S hosts に "," 区切りの値を指定する。
+capistranoを起動したホストからそれぞれのホストに/etc/chef/以下の内容がコピーされた後、hosts/{hostname}.json を使って chef-solo が実行されます。
 
 ## 実行例
 
