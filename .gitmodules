@@ -1,3 +1,6 @@
 [submodule "cookbooks"]
 	path = cookbooks
 	url = https://github.com/hnakamur/chef-cookbooks.git
+[submodule "roles"]
+	path = roles
+	url = https://github.com/hnakamur/chef-roles.git
