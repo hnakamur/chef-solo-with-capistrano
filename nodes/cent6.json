@@ -1,0 +1,8 @@
+{
+  "run_list": [
+    "role[nagios-server]",
+    "pcre",
+    "self_signed_certificate",
+    "haproxy"
+  ]
+}

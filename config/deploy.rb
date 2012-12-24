@@ -2,6 +2,7 @@ require "json"
 
 set :application, "chef-solo"
 set :hostname,    `hostname -s`.chomp
+set :user,        "root"
 
 namespace :chef do
 
@@ -19,7 +20,7 @@ namespace :chef do
   task :sync do
     find_servers_for_task(current_task).each do |server|
       next if server.host == hostname
-      `rsync -avC --delete -e ssh /etc/chef/ #{server.host}:/etc/chef/`
+      `rsync -avC --delete -e ssh /etc/chef/ root@#{server.host}:/etc/chef/`
     end
   end
 
